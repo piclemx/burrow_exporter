@@ -15,7 +15,7 @@ import (
 	"burrow_exporter/burrow_exporter"
 )
 
-var Version = "0.0.5"
+var Version = "0.0.1"
 
 func main() {
 	app := cli.NewApp()
@@ -40,7 +40,7 @@ func main() {
 		cli.IntFlag{
 			Name:   "api-version",
 			Usage:  "Burrow API version to leverage",
-			Value:  2,
+			Value:  3,
 			EnvVar: "API_VERSION",
 		},
 		cli.BoolFlag{
