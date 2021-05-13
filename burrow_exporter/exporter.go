@@ -28,9 +28,9 @@ type BurrowExporter struct {
 	skipPartitionMaxOffset     bool
 	skipTotalLag               bool
 	skipTopicPartitionOffset   bool
-	consumersGroupRegex		  *regexp.Regexp
-	topicsRegex		  		  *regexp.Regexp
-	clustersRegex			  *regexp.Regexp
+	consumersGroupRegex        *regexp.Regexp
+	topicsRegex                *regexp.Regexp
+	clustersRegex              *regexp.Regexp
 }
 
 func (be *BurrowExporter) processGroup(cluster, group string) {
@@ -149,7 +149,7 @@ func (be *BurrowExporter) processCluster(cluster string) {
 	}
 
 	for _, topic := range topics.Topics {
-		if (be.topicsRegex.MatchString(topic)) {
+		if be.topicsRegex.MatchString(topic) {
 			wg.Add(1)
 
 			go func(t string) {
@@ -194,7 +194,7 @@ func (be *BurrowExporter) scrape() {
 	wg := sync.WaitGroup{}
 
 	for _, cluster := range clusters.Clusters {
-		if (be.clustersRegex.MatchString(cluster)) {
+		if be.clustersRegex.MatchString(cluster) {
 			wg.Add(1)
 
 			go func(c string) {
@@ -233,8 +233,8 @@ func (be *BurrowExporter) mainLoop(ctx context.Context) {
 }
 
 func MakeBurrowExporter(burrowUrl string, apiVersion int, metricsAddr string, interval int, skipPartitionStatus bool,
-	skipConsumerStatus bool, skipPartitionLag bool, skipPartitionCurrentOffset bool, skipPartitionMaxOffset bool, skipTotalLag bool, skipTopicPartitionOffset bool
-	consumersGroupRegex *regexp.Regexp, topicsRegex *regexp.Regexp, clustersRegex *regexp.Regexp) *BurrowExporter {
+	skipConsumerStatus bool, skipPartitionLag bool, skipPartitionCurrentOffset bool, skipPartitionMaxOffset bool, skipTotalLag bool,
+	skipTopicPartitionOffset bool, consumersGroupRegex *regexp.Regexp, topicsRegex *regexp.Regexp, clustersRegex *regexp.Regexp) *BurrowExporter {
 	return &BurrowExporter{
 		client:                     MakeBurrowClient(burrowUrl, apiVersion),
 		metricsListenAddr:          metricsAddr,
@@ -246,8 +246,8 @@ func MakeBurrowExporter(burrowUrl string, apiVersion int, metricsAddr string, in
 		skipPartitionMaxOffset:     skipPartitionMaxOffset,
 		skipTotalLag:               skipTotalLag,
 		skipTopicPartitionOffset:   skipTopicPartitionOffset,
-		consumersGroupRegex: consumersGroupRegex,
-		topicsRegex: topicsRegex,
-		clustersRegex: clustersRegex,
+		consumersGroupRegex:        consumersGroupRegex,
+		topicsRegex:                topicsRegex,
+		clustersRegex:              clustersRegex,
 	}
 }
