@@ -2,6 +2,7 @@ package burrow_exporter
 
 import (
 	"context"
+	"regexp"
 
 	"sync"
 	"time"
@@ -27,6 +28,9 @@ type BurrowExporter struct {
 	skipPartitionMaxOffset     bool
 	skipTotalLag               bool
 	skipTopicPartitionOffset   bool
+	consumersGroupRegex		  *regexp.Regexp
+	topicsRegex		  		  *regexp.Regexp
+	clustersRegex			  *regexp.Regexp
 }
 
 func (be *BurrowExporter) processGroup(cluster, group string) {
@@ -134,21 +138,25 @@ func (be *BurrowExporter) processCluster(cluster string) {
 	wg := sync.WaitGroup{}
 
 	for _, group := range groups.ConsumerGroups {
-		wg.Add(1)
+		if be.consumersGroupRegex.MatchString(group) {
+			wg.Add(1)
 
-		go func(g string) {
-			defer wg.Done()
-			be.processGroup(cluster, g)
-		}(group)
+			go func(g string) {
+				defer wg.Done()
+				be.processGroup(cluster, g)
+			}(group)
+		}
 	}
 
 	for _, topic := range topics.Topics {
-		wg.Add(1)
+		if (be.topicsRegex.MatchString(topic)) {
+			wg.Add(1)
 
-		go func(t string) {
-			defer wg.Done()
-			be.processTopic(cluster, t)
-		}(topic)
+			go func(t string) {
+				defer wg.Done()
+				be.processTopic(cluster, t)
+			}(topic)
+		}
 	}
 
 	wg.Wait()
@@ -186,12 +194,14 @@ func (be *BurrowExporter) scrape() {
 	wg := sync.WaitGroup{}
 
 	for _, cluster := range clusters.Clusters {
-		wg.Add(1)
+		if (be.clustersRegex.MatchString(cluster)) {
+			wg.Add(1)
 
-		go func(c string) {
-			defer wg.Done()
-			be.processCluster(c)
-		}(cluster)
+			go func(c string) {
+				defer wg.Done()
+				be.processCluster(c)
+			}(cluster)
+		}
 	}
 
 	wg.Wait()
@@ -223,7 +233,8 @@ func (be *BurrowExporter) mainLoop(ctx context.Context) {
 }
 
 func MakeBurrowExporter(burrowUrl string, apiVersion int, metricsAddr string, interval int, skipPartitionStatus bool,
-	skipConsumerStatus bool, skipPartitionLag bool, skipPartitionCurrentOffset bool, skipPartitionMaxOffset bool, skipTotalLag bool, skipTopicPartitionOffset bool) *BurrowExporter {
+	skipConsumerStatus bool, skipPartitionLag bool, skipPartitionCurrentOffset bool, skipPartitionMaxOffset bool, skipTotalLag bool, skipTopicPartitionOffset bool
+	consumersGroupRegex *regexp.Regexp, topicsRegex *regexp.Regexp, clustersRegex *regexp.Regexp) *BurrowExporter {
 	return &BurrowExporter{
 		client:                     MakeBurrowClient(burrowUrl, apiVersion),
 		metricsListenAddr:          metricsAddr,
@@ -235,5 +246,8 @@ func MakeBurrowExporter(burrowUrl string, apiVersion int, metricsAddr string, in
 		skipPartitionMaxOffset:     skipPartitionMaxOffset,
 		skipTotalLag:               skipTotalLag,
 		skipTopicPartitionOffset:   skipTopicPartitionOffset,
+		consumersGroupRegex: consumersGroupRegex,
+		topicsRegex: topicsRegex,
+		clustersRegex: clustersRegex,
 	}
 }

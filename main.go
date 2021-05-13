@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"regexp"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/urfave/cli"
@@ -77,6 +78,24 @@ func main() {
 			Usage:  "Skip exporting topic partition offset",
 			EnvVar: "SKIP_TOPIC_PARTITION_OFFSET",
 		},
+		cli.StringFlag{
+			Name:   "consumer-groups",
+			Usage:  "The Kafka consumer group to export metrics for",
+			Value:  ".*",
+			EnvVar: "CONSUMER_GROUPS",
+		},
+		cli.StringFlag{
+			Name:   "topics",
+			Usage:  "The Kafka topic to export metrics for",
+			Value:  ".*",
+			EnvVar: "TOPICS",
+		},
+		cli.StringFlag{
+			Name:   "clusters",
+			Usage:  "Export metrics for just clusters matching this regex. Defaults to all.",
+			Value:  ".*",
+			EnvVar: "CLUSTERS",
+		},
 	}
 
 	app.Action = func(c *cli.Context) error {
@@ -92,6 +111,24 @@ func main() {
 
 		if !c.IsSet("interval") {
 			fmt.Println("A scrape interval is required (e.g. --interval 30)")
+			os.Exit(1)
+		}
+
+		clustersRegex, err := regexp.Compile(c.String("clusters"))
+		if err != nil {
+			fmt.Printf("clusters setting %s is not a valid regexp: %s\n", c.String("clusters"), err)
+			os.Exit(1)
+		}
+
+		consumerGroupsRegex, err := regexp.Compile(c.String("consumer-groups"))
+		if err != nil {
+			fmt.Printf("consumer-groups setting %s is not a valid regexp: %s\n", c.String("consumer-groups"), err)
+			os.Exit(1)
+		}
+
+		topicsRegex, err := regexp.Compile(c.String("topics"))
+		if err != nil {
+			fmt.Printf("topics setting %s is not a valid regexp: %s\n", c.String("topics"), err)
 			os.Exit(1)
 		}
 
@@ -112,7 +149,10 @@ func main() {
 			c.Bool("skip-partition-current-offset"),
 			c.Bool("skip-partition-max-offset"),
 			c.Bool("skip-total-lag"),
-			c.Bool("skip-topic-partition-offset"))
+			c.Bool("skip-topic-partition-offset"),
+			consumerGroupsRegex,
+			topicsRegex,
+			clustersRegex)
 		go exporter.Start(ctx)
 
 		<-done
