@@ -5,7 +5,7 @@ import (
 	"os"
 	"regexp"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 
 	"context"
@@ -36,6 +36,7 @@ func main() {
 			Name:   "interval",
 			Usage:  "The interval(seconds) specifies how often to scrape burrow.",
 			EnvVar: "INTERVAL",
+			Value:  30,
 		},
 		cli.IntFlag{
 			Name:   "api-version",

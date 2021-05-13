@@ -3,16 +3,17 @@ module burrow_exporter
 go 1.15
 
 require (
-	github.com/Sirupsen/logrus v0.11.5
-	github.com/beorn7/perks v0.0.0-20160804104726-4c0e84591b9a // indirect
-	github.com/golang/protobuf v0.0.0-20170331031902-2bba0603135d // indirect
-	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
-	github.com/prometheus/client_golang v0.8.1-0.20170511141251-42552c195dd3
-	github.com/prometheus/client_model v0.0.0-20170216185247-6f3806018612 // indirect
-	github.com/prometheus/common v0.0.0-20170427095455-13ba4ddd0caa // indirect
-	github.com/prometheus/procfs v0.0.0-20170519190837-65c1f6f8f0fc // indirect
+	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/kr/text v0.2.0 // indirect
+	github.com/prometheus/client_golang v1.10.0
+	github.com/prometheus/common v0.24.0 // indirect
+	github.com/russross/blackfriday/v2 v2.1.0 // indirect
+	github.com/sirupsen/logrus v1.8.1
 	github.com/stretchr/testify v1.7.0 // indirect
-	github.com/urfave/cli v1.19.2-0.20170424213122-ab403a54a148
-	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
-	golang.org/x/sys v0.0.0-20170425135208-9f30dcbe5be1 // indirect
+	github.com/urfave/cli v1.22.5
+	golang.org/x/sys v0.0.0-20210511113859-b0526f3d8744 // indirect
+	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
+	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
