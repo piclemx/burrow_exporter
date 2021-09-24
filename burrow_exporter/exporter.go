@@ -164,6 +164,15 @@ func (be *BurrowExporter) processCluster(cluster string) {
 
 func (be *BurrowExporter) startPrometheus() {
 	http.Handle("/metrics", promhttp.Handler())
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(`<html>
+			<head><title>Burrow Exporter</title></head>
+			<body>
+			<h1>Burrow Exporter</h1>
+			<p><a href="` + *metricsPath + `">Metrics</a></p>
+			</body>
+			</html>`))
+	})
 	go http.ListenAndServe(be.metricsListenAddr, nil)
 }
 
