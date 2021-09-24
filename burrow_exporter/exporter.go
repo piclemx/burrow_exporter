@@ -169,7 +169,7 @@ func (be *BurrowExporter) startPrometheus() {
 			<head><title>Burrow Exporter</title></head>
 			<body>
 			<h1>Burrow Exporter</h1>
-			<p><a href="` + *metricsPath + `">Metrics</a></p>
+			<p><a href="` + `/metrics` + `">Metrics</a></p>
 			</body>
 			</html>`))
 	})
